@@ -159,6 +159,7 @@ class Agent(object):
             self.model.save_weights('logs/model.h5')
     
     def test(self):
+        epsilon = self.epsilon
         self.epsilon = 0.0
         num_data = self.processor.num_data
         test_begin = floor((1-TEST_FRAC)*num_data)
@@ -191,5 +192,5 @@ class Agent(object):
         df = pd.DataFrame({'action': actions, 'true': Y, 'price': prices})
         self.test_df = df
         self.test_df.to_csv('test/test.csv')
-        self.epsilon = self.epsilon_min
+        self.epsilon = epsilon
 
