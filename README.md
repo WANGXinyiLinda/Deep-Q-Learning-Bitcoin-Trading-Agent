@@ -12,11 +12,8 @@
 
 ## Usage:
 
-    > **Train:**
-    > python train.py
-    >
-    > **Test:**
-    >python test.py, python test2.py
-    >
-    > **Tune parameters:** 
-    > Change values in constants.py
+    Train: python train.py
+    
+    Test: python test.py, python test2.py
+    
+    Tune parameters: Change values in constants.py
