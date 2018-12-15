@@ -45,13 +45,11 @@ class Agent(object):
         # first-in-first-out, keep a fixed size of recent history
         # element structure: state_index, action, reward, done
         self.memory = []
-        self.epsilon = 1.0  # exploration rate
-        self.epsilon_min = 0.01
         self.model = modelBuilder.build((NUM_CHANNELS, HISTORY_LENGTH + 1), 1)
-        sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-        self.model.compile(loss = huber_loss, optimizer = sgd) # learning rate default to 0.01
+        adam = optimizers.Adam()
+        self.model.compile(loss = huber_loss, optimizer = adam) # learning rate default to 0.01
         #self.model.load_weights('logs/model.h5')
-        self.logs_df = pd.DataFrame(columns = ['loss', 'lr', 'epsilon'])
+        self.logs_df = pd.DataFrame(columns = ['loss', 'lr'])
         self.test_df = pd.DataFrame(columns = ['action', 'true', 'price'])
     
     """
@@ -84,12 +82,8 @@ class Agent(object):
     Act base on the currenty state.
     """
     def act(self, state_index):
-        # random.random() return a float between 0.0 and 1.0
-        if random.random() < self.epsilon: # explore
-            action = random.randrange(NUM_ACTIONS)
-        else: # exploit
-            q_values = np.array([self.predict(state_index, 0), self.predict(state_index, 1)])
-            action = q_values.argmax()
+        q_values = np.array([self.predict(state_index, 0), self.predict(state_index, 1)])
+        action = q_values.argmax()
         reward = self.reward_func(state_index, action)
         return action, reward
     
@@ -141,26 +135,18 @@ class Agent(object):
                     lr = K.get_value(self.model.optimizer.lr)
                     # record loss and learning rate
                     history.append([loss, lr])
-                    # do epsilon decay per EPSILON_UPDATE_STEP
-                    if self.epsilon > self.epsilon_min:
-                        if (epoch*steps_per_epoch + step) % EPSILON_UPDATE_STEP == EPSILON_UPDATE_STEP - 1:
-                            self.epsilon *= EPSILON_DECAY
-                    else:
-                        self.epsilon = self.epsilon_min
             self.test()
             # do learning rate decay
             #if epoch % LR_UPDATE_EPOCH == LR_UPDATE_EPOCH - 1:
             #    K.set_value(self.model.optimizer.lr, lr*LR_DECAY)
             history = np.mean(history, axis = 0)
-            print('epoch {}: loss: {}, learning rate: {}, epsilon: {}'.format(epoch, history[0], history[1], self.epsilon))
-            df = pd.DataFrame([np.append(history, self.epsilon)], columns = ['loss', 'lr', 'epsilon'])
+            print('epoch {}: loss: {}, learning rate: {}'.format(epoch, history[0], history[1]))
+            df = pd.DataFrame([history], columns = ['loss', 'lr'])
             self.logs_df = self.logs_df.append(df, ignore_index=True)
             self.logs_df.to_csv('logs/history.csv')
             self.model.save_weights('logs/model.h5')
     
     def test(self):
-        epsilon = self.epsilon
-        self.epsilon = 0.0
         num_data = self.processor.num_data
         test_begin = floor((1-TEST_FRAC)*num_data)
         print('Use {} data for testing.'.format(num_data - test_begin))
@@ -192,5 +178,4 @@ class Agent(object):
         df = pd.DataFrame({'action': actions, 'true': Y, 'price': prices})
         self.test_df = df
         self.test_df.to_csv('test/test.csv')
-        self.epsilon = epsilon
 

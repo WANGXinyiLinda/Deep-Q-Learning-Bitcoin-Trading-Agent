@@ -25,7 +25,7 @@ def test(actions, prices):
             usd+=sell_money
             btc-=sell_btc
         current = usd + btc*prices[i]
-        history.append(current/1000.0)
+        history.append(current/1000.0 - 1)
     return history
 
 optimal = []
@@ -43,7 +43,7 @@ ax = fig.add_subplot(111)
 ax.set_aspect(aspect = 2000)
 plt.plot(history_learn)
 #plt.plot(history_opt)
-plt.plot(prices/prices[0])
+plt.plot(prices/prices[0] - 1)
 #plt.savefig('test/result_1_opt.png')
 #plt.plot(actions, 'bs')
 #plt.savefig('test/actions_1.png')
