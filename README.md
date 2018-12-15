@@ -15,9 +15,11 @@ This is a continued work of the RIPS-HK 2018 group project, in which our emphasi
 
 ## Q-network:
 
-    map both state and action to a single Q value
+Map both state and action to a single Q value.
+
+![](doc-image/model.png)
     
-    structure: CONV(32) - CONV(64) - GRU(128) - GRU(128) - Dense(64) - Dense(32)
+    
 
 ## Memory replay:
 
