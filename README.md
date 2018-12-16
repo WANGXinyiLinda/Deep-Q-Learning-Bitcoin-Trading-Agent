@@ -1,6 +1,6 @@
 # Deep Q Learning Bitcoin Trading Agent
 
-This is a continued work of the RIPS-HK 2018 group project, in which our emphasis is more of understanding the mechanism of Bitcoin and reproducing previous works. In this project, I focus more on try different ways to implement the deep Q-learning algorithm. I used two kind of neural networks: ResNet and recurrent neural network (RNN). I tried two approaches to implement the Q-network: the rst one is to use the Q-network to map the state to the Q-values of all actions, the other one is to use the Q-network to map both the state and a specic action to a single Q-value. It turns out that the latter scheme with RNN has a better performance.
+This is the first half of my capstone project which is a continuation of the RIPS-HK 2018 group project. In this project, I focus on trying different ways to implement the deep Q-learning algorithm of the Bitcoin trading agent. Two kinds of neural networks are used: ResNet and recurrent neural network (RNN). I tried two approaches to implement the Q-network: the first one is to use the Q-network to map the state to the Q-values of all actions, the other one is to use the Q-network to map both the state and a specific action to a single Q-value. It turns out that the latter scheme has a better performance in this project. And instead of using the past experience to do memory reply, I tried to use the pre-known optimal policy which turned out to have a much better performance.
 
 ![](doc-image/deep-q-network-example.png)
 
